@@ -30,10 +30,10 @@ ps: Ao longo da implementação do sistema, algumas informações foram alterada
 
 Tecnologias usadas:
 
-SGBD: PostgreSQL
-Linguagem de programação: Python
-Adaptador de Banco de dados (interoperabilidade do PostgreSQL e Python): psycopg2
-Biblioteca: tkinter (biblioteca para a interface gráfica do sistema)
+SGBD: PostgreSQL,
+Linguagem de programação: Python,
+Adaptador de Banco de dados (interoperabilidade do PostgreSQL e Python): psycopg2,
+Biblioteca: tkinter (biblioteca para a interface gráfica do sistema).
 
 
 Imagens gráfica do sistema:
