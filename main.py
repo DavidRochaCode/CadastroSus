@@ -1,15 +1,13 @@
 
 
-
+# -*- coding: utf-8 -*-
 from cProfile import label
-from cgitb import text
 from tkinter import *
 from tkinter import ttk
 from turtle import st
 
 from setuptools import Command
 from popup import *
-from sql import *
 import psycopg2
 
 # configuracao do banco de dado
@@ -18,7 +16,7 @@ import psycopg2
 hostname = 'localhost'
 database = 'projetoubs'
 username = 'postgres'
-pwd = 'alaska'
+pwd = 'postgres'
 port_id = 5432
 conn = None
 cur = None
@@ -40,18 +38,10 @@ try:
 
     def criar_tabela():
         cur.execute(medico)
-        #cur.execute(exame)
-        #cur.execute(clinica)
-        #cur.execute(faz_exame)
-        #cur.execute(encaminha_exames)
-        #cur.execute(medicamento)
         cur.execute(atendimento)
         cur.execute(paciente)
-        #cur.execute(frequencia_atendimento)
         cur.execute(atendente)
-        #cur.execute(consulta)
-        #cur.execute(marcacao_consulta)
-        #cur.execute(dados_cadastrais)
+
         conn.commit()
     criar_tabela()
 
@@ -80,9 +70,9 @@ try:
     header_Frame = Frame(tela, width=largura_resolucao, height=85, bg="#0B033F")
     header_Frame.place(x=0, y=0)
 
-    logo_garanhuns = PhotoImage(file="assets/brasao.png")
+    """    logo_garanhuns = PhotoImage(file="assets/brasao.png")
     labelImagem = Label(header_Frame, image=logo_garanhuns,
-                        bg="#0B033F").place(x=30, y=5)
+                        bg="#0B033F").place(x=30, y=5) """
 
     label_ubs = Label(header_Frame,
                     text="UBS",
@@ -192,8 +182,8 @@ try:
                             highlightbackground="grey",
                             highlightthickness=3
                             ).place(x=70, y=25)
-    icon_atendente = PhotoImage(file="assets/user.png")
-    labelImagem = Label(tb_atendente, image=icon_atendente).place(x=175, y=35)
+    """  icon_atendente = PhotoImage(file="assets/user.png")
+    labelImagem = Label(tb_atendente, image=icon_atendente).place(x=175, y=35) """
 
     label_nome_atendente = Label(tb_atendente,
                                 text="Nome:",
@@ -204,6 +194,7 @@ try:
     #codigo pega nome e sobrenome da tabela atendente                             
     def pegarNome():
         cur.execute("SELECT * FROM atendente")
+        nome = "Não encontrado"  # valor padrão
         for record in cur.fetchall():
             nome = f"{record[0]} {record[1]}"
         return nome
@@ -223,6 +214,7 @@ try:
     #codigo pega codigo da tabela atendente                            
     def pegarCodigo():
         cur.execute("SELECT * FROM atendente")
+        codigo = "Não encontrado"  # valor padrão
         for record in cur.fetchall():
             codigo = record[3]
         return codigo
@@ -249,10 +241,11 @@ try:
 
     # TABELA MÉDICO----------------------------------------------------------------------
     def obterInformacao(n):
-            cur.execute(f"SELECT * FROM medico")
-            for record in cur.fetchall():
-                info = record[n]
-            return info
+        cur.execute("SELECT * FROM medico")
+        info = "Não encontrado"  # valor padrão para evitar erro
+        for record in cur.fetchall():
+            info = record[n]
+        return info
 
     def popMedicoAlterar():
 
@@ -338,8 +331,8 @@ try:
                         highlightbackground="grey",
                         highlightthickness=3
                         ).place(x=70, y=25)
-    icon_medico = PhotoImage(file="assets/user.png")
-    labelImagem = Label(tb_medico, image=icon_medico).place(x=175, y=35)
+    """ icon_medico = PhotoImage(file="assets/user.png")
+    labelImagem = Label(tb_medico, image=icon_medico).place(x=175, y=35) """
 
     label_nome_medico = Label(tb_medico,
                             text="Nome:",
@@ -512,6 +505,7 @@ try:
     
         def buscarNomePaciente():
             cur.execute(f"SELECT * FROM paciente WHERE cpf_paciente = '{entry_consultar_paciente.get()}'")
+            nome = "Não encontrado"  # valor padrão
             for record in cur.fetchall():
                 nome = f"{record[0]} {record[1]}"
             return nome
