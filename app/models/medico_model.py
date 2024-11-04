@@ -38,7 +38,7 @@ class MedicoModel:
 
     def buscar_medico_por_crm(self, crm):
         logging.info("Buscando médico com CRM: %s", crm)
-        query = "SELECT * FROM medico WHERE crm = %s;"
+        query = "SELECT * FROM medico WHERE cod_controle = %s;"
         try:
             medico = self.db.fetch_all(query, (crm,))
             logging.info("Médico encontrado: %s", medico)

@@ -38,9 +38,9 @@ class MedicoView:
         try:
             medico = self.controller.buscar_medico_por_crm(self.crm_medico)
             if medico:
-                self.label_nome.config(text=medico[0]['nome'])
-                self.label_crm.config(text=medico[0]['crm'])
-                self.label_atuacao.config(text=medico[0]['atuacao'])
+                self.label_nome.config(text=medico[0][1])  # nome
+                self.label_crm.config(text=medico[0][0])   # crm
+                self.label_atuacao.config(text=medico[0][3])  # atuacao
             else:
                 logging.info("Nenhum médico encontrado.")
                 self.label_nome.config(text="Não encontrado")

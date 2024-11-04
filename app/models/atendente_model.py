@@ -49,8 +49,8 @@ class AtendenteModel:
                 {
                     'nome': registro[0],
                     'sobrenome': registro[1],
-                    'cod_atendente': registro[2],
-                    'cod_controle': registro[3]
+                    'cod_atendente': registro[3],
+                    'cod_controle': registro[2]
                 }
                 for registro in registros
             ]
