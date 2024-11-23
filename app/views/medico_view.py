@@ -7,7 +7,7 @@ class MedicoView:
     def __init__(self, master, controller):
         logging.info("Inicializando a visualização de médico.")
         self.controller = controller
-        self.crm_medico = 1234  # Exemplo de CRM; ajuste conforme necessário
+        self.cod_controle = 1234  # Exemplo de CRM; ajuste conforme necessário
         self.frame_medico = Frame(master)
         self.frame_medico.pack(expand=True, fill="both")
 
@@ -34,9 +34,9 @@ class MedicoView:
         Button(self.frame_medico, text="Alterar", width=10, font="Inter 8 bold", fg="white", bg="#0B033F", command=self.alterar_medico).place(x=175, y=225)
 
     def carregar_dados(self):
-        logging.info("Carregando dados do médico com CRM: %s", self.crm_medico)
+        logging.info("Carregando dados do médico com CRM: %s", self.cod_controle)
         try:
-            medico = self.controller.buscar_medico_por_crm(self.crm_medico)
+            medico = self.controller.buscar_medico_por_crm(self.cod_controle)
             if medico:
                 self.label_nome.config(text=medico[0][1])  # nome
                 self.label_crm.config(text=medico[0][0])   # crm

@@ -1,14 +1,10 @@
-import psycopg2
+# database/sqlite_database.py
+import sqlite3
+from app.database.database_interface import DatabaseInterface
 
-class Database:
-    def __init__(self, hostname='localhost', database='projetoubs', username='postgres', pwd='postgres', port_id=5432):
-        self.conn = psycopg2.connect(
-            host=hostname,
-            dbname=database,
-            user=username,
-            password=pwd,
-            port=port_id
-        )
+class SQLiteDatabase(DatabaseInterface):
+    def __init__(self, database='projetoubs.db'):
+        self.conn = sqlite3.connect(database)
         self.cur = self.conn.cursor()
 
     def execute(self, query, params=None):

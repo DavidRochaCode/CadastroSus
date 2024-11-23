@@ -1,6 +1,6 @@
 import logging
 from tkinter import Tk
-from models.database import Database
+from database.database_factory import DatabaseFactory  # Importa a fábrica do banco de dados
 
 # Configura o logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,8 +22,16 @@ from controllers.atendimento_controller import AtendimentoController
 from views.main_view import MainView
 
 def main():
-    logging.info("Inicializando o banco de dados.")
-    db = Database()
+    # Inicializa o banco de dados PostgreSQL usando a fábrica
+    logging.info("Inicializando o banco de dados PostgreSQL.")
+    db = DatabaseFactory.create_database(
+        db_type='postgresql',
+        hostname='localhost',
+        database='projetoubs',
+        username='postgres',
+        pwd='postgres',
+        port_id=5432
+    )
 
     # Configuração para Atendente
     logging.info("Configurando o modelo e controlador para Atendente.")
@@ -52,6 +60,10 @@ def main():
     # Interface principal com abas
     logging.info("Inicializando a interface principal com as abas.")
     root = Tk()
+    root.title("Sistema de Gestão UBS")  # Título da janela principal
+    root.geometry("460x460")  # Dimensões iniciais da janela
+
+    # Cria a MainView com as instâncias dos controladores
     MainView(root, atendente_controller, medico_controller, paciente_controller, atendimento_controller)
 
     # Inicia o loop principal da interface
