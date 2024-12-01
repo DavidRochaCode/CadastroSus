@@ -8,14 +8,15 @@ class PacienteController:
     def buscar_paciente(self, cpf):
         logging.info("Buscando paciente com CPF: %s", cpf)
         try:
-            resultado = paciente = self.model.buscar_paciente_por_cpf(cpf)
-            if resultado is False:
+            paciente = self.model.buscar_paciente_por_cpf(cpf)
+            if paciente is False:
                 return {"message": f"Paciente com CPF {cpf} não existe", "status": "error"}
             logging.info("Paciente encontrado: %s", paciente)
-            return paciente
+            return {"data": paciente, "status": "success"}
         except Exception as e:
             logging.error("Erro ao buscar paciente: %s", e)
             raise
+
 
     def inserir_paciente(self, nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario):
         logging.info("Inserindo paciente: Nome = %s %s, CPF = %s", nome, sobrenome, cpf)
@@ -28,10 +29,10 @@ class PacienteController:
             logging.error("Erro ao inserir paciente: %s", e)
             raise
 
-    def alterar_paciente(self, nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario):
+    def alterar_paciente(self, nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario, status):
         logging.info("Atualizando paciente com CPF: %s", cpf)
         try:
-            resultado = self.model.atualizar_paciente(nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario)
+            resultado = self.model.atualizar_paciente(nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario, status)
             if not resultado:
                 return {"message": f"Paciente com CPF {cpf} não encontrado.", "status": "error"}
             return {"message": f"Paciente atualizado com sucesso", "status": "success"}

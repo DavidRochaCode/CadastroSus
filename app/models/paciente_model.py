@@ -15,7 +15,8 @@ class PacienteModel:
             cartao_sus VARCHAR(15),
             endereco VARCHAR(255),
             celular VARCHAR(15),
-            prontuario INT
+            prontuario INT,
+            status VARCHAR(100)
         );
         """
         try:
@@ -25,18 +26,18 @@ class PacienteModel:
             logging.error("Erro ao criar tabela de pacientes: %s", e)
             raise
 
-    def inserir_paciente(self, nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario):
+    def inserir_paciente(self, nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario, status = 'ativo'):
         logging.info("Inserindo paciente com CPF: %s", cpf)
         if self.verificar_paciente_existe(cpf):
             logging.warning("Paciente com CPF %s já existe. Atualização abortada.", cpf)
             return True  # Paciente não encontrado
         query = """
-        INSERT INTO paciente (nome, sobrenome, cpf_paciente, cartao_sus, endereco, celular, prontuario)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO paciente (nome, sobrenome, cpf_paciente, cartao_sus, endereco, celular, prontuario, status)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (cpf_paciente) DO NOTHING;
         """
         try:
-            self.db.execute(query, (nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario))
+            self.db.execute(query, (nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario, status))
             logging.info("Paciente inserido com sucesso.")
             return False
         except Exception as e:
@@ -56,7 +57,7 @@ class PacienteModel:
             logging.error("Erro ao verificar paciente: %s", e)
             raise
         
-    def atualizar_paciente(self, nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario):
+    def atualizar_paciente(self, nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario, status):
         logging.info("Atualizando paciente com CPF: %s", cpf)
         # Verifica se o paciente existe
         if not self.verificar_paciente_existe(cpf):
@@ -64,11 +65,11 @@ class PacienteModel:
             return False  # Paciente não encontrado
         query = """
         UPDATE paciente
-        SET nome = %s, sobrenome = %s, cartao_sus = %s, endereco = %s, celular = %s, prontuario = %s
+        SET nome = %s, sobrenome = %s, cartao_sus = %s, endereco = %s, celular = %s, prontuario = %s, status = %s
         WHERE cpf_paciente = %s;
         """
         try:
-            self.db.execute(query, (nome, sobrenome, cartao_sus, endereco, celular, prontuario, cpf))
+            self.db.execute(query, (nome, sobrenome, cartao_sus, endereco, celular, prontuario, status, cpf))
             logging.info("Paciente atualizado com sucesso.")
             return True
         except Exception as e:
@@ -78,16 +79,37 @@ class PacienteModel:
     def buscar_paciente_por_cpf(self, cpf):
         logging.info("Buscando paciente com CPF: %s", cpf)
         if not self.verificar_paciente_existe(cpf):
-            logging.warning("Paciente com CPF %s não encontrado. Atualização abortada.", cpf)
+            logging.warning("Paciente com CPF %s não encontrado.", cpf)
             return False  # Paciente não encontrado
-        query = "SELECT * FROM paciente WHERE cpf_paciente = %s;"
+        
+        query = """
+            SELECT nome, sobrenome, cpf_paciente, cartao_sus, endereco, celular, prontuario, status
+            FROM paciente
+            WHERE cpf_paciente = %s;
+        """
         try:
-            paciente = self.db.fetch_all(query, (cpf,))
-            logging.info("Paciente encontrado: %s", paciente)
-            return paciente
+            pacientes = self.db.fetch_all(query, (cpf,))  # Busca os pacientes
+            if not pacientes:
+                return False
+            
+            paciente = pacientes[0]  # Seleciona o primeiro registro
+            # Mapeando o registro para um dicionário
+            paciente_dict = {
+                "nome": paciente[0],
+                "sobrenome": paciente[1],
+                "cpf_paciente": paciente[2],
+                "cartao_sus": paciente[3],
+                "endereco": paciente[4],
+                "celular": paciente[5],
+                "prontuario": paciente[6],
+                "status": paciente[7],
+            }
+            logging.info("Paciente encontrado: %s", paciente_dict)
+            return paciente_dict  # Retorna o dicionário com os campos do paciente
         except Exception as e:
             logging.error("Erro ao buscar paciente: %s", e)
             raise
+
 
     def deletar_paciente(self, cpf):
         logging.info("Deletando paciente com CPF: %s", cpf)

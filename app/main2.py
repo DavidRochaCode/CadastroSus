@@ -19,8 +19,23 @@ from app.controllers.atendimento_controller import AtendimentoController
 from app.models.enfermeira_model import EnfermeiraModel
 from app.controllers.enfermeira_controller import EnfermeiraController
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
+
+
+
 # Inicializar FastAPI
 app = FastAPI(title="Sistema de Gestão UBS", version="1.0")
+
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todos os domínios (troque por uma lista de domínios específicos em produção)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos HTTP
+    allow_headers=["*"],  # Permite todos os cabeçalhos
+)
 
 # Inicializar banco de dados
 db = DatabaseFactory.create_database(
@@ -162,17 +177,18 @@ def create_paciente(nome: str, sobrenome: str, cpf: str, cartao_sus: str, endere
 @app.get("/pacientes/{cpf}")
 def get_paciente(cpf: str):
     try:
-        paciente = paciente_controller.buscar_paciente(cpf)
-        if paciente["status"] == "error":
-            raise HTTPException(status_code=400, detail=paciente["message"])
-        return {"data": paciente}
+        resposta = paciente_controller.buscar_paciente(cpf)
+        if resposta["status"] == "error":
+            raise HTTPException(status_code=400, detail=resposta["message"])
+        return resposta  # Retorna os dados completos do paciente
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.put("/pacientes/{cpf}")
-def update_paciente(nome: str, sobrenome: str, cpf: str, cartao_sus: str, endereco: str, celular: str, prontuario: int):
+def update_paciente(nome: str, sobrenome: str, cpf: str, cartao_sus: str, endereco: str, celular: str, prontuario: int, status:str):
     try:
-        resultado = paciente_controller.alterar_paciente(nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario)
+        resultado = paciente_controller.alterar_paciente(nome, sobrenome, cpf, cartao_sus, endereco, celular, prontuario, status)
         if resultado["status"] == "error":
             raise HTTPException(status_code=404, detail=resultado["message"])
         return {"message": resultado["message"]}
